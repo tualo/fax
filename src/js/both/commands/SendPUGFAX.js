@@ -41,11 +41,12 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGFax', {
         },
         disabled: true,
         items: [
-            {
+            /*{
                 xtype: 'textfield',
                 name: 'from',
                 fieldLabel: 'Von',
             },
+            */
             {
                 xtype: 'textfield',
                 name: 'to',
@@ -61,7 +62,7 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGFax', {
                 flex: 1,
                 xtype: 'htmleditor',
                 name: 'mailbody'
-            },*/
+            },
             {
                 xtype: 'tagfield',
                 fieldLabel: 'Anhänge',
@@ -74,6 +75,7 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGFax', {
                 queryMode: 'local',
                 filterPickList: true
             }
+            */
         ]
       },{
         hidden: true,

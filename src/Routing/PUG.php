@@ -47,6 +47,12 @@ class PUG implements IRoute{
                 if ($infotable->empty()) throw new \Exception('Info not found');
                 $info = $infotable->getSingle();
                 $info['fax']=json_decode($info['fax'],true);
+
+                App::result('data',[
+                    'to'=>$info['fax'],
+                    'template'=> $template,
+                ]);
+                /*
                 App::result('info', $info);
                 P::exportPUG($db);
 
@@ -121,6 +127,7 @@ class PUG implements IRoute{
                 ]);
 
                 App::result('html', $html);
+                */
                 App::result('success', true);
             } catch (\Exception $e) {
                 App::result('msg', $e->getMessage());
