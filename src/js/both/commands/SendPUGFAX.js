@@ -180,8 +180,8 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGFax', {
       
       me.getComponent('messagepanel').hide();
       me.getComponent('waitpanel').show();
-      let res= await fetch('./fax/sendpug',{
-        method: 'POST',
+      let res= await fetch('./fax/'+this.record.get('__table_name')+'/'+this.record.get('__sendfax_template')+'/'+this.record.get('__id')+'/'+o.to,{
+        method: 'GET',
         body: JSON.stringify(o)
       });
       res = await res.json();
