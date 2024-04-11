@@ -5,3 +5,5 @@ create table if not exists `fax_config` (
     `password` varchar(255) NOT NULL,
     PRIMARY KEY (`id`)
 );
+
+insert ignore into ds_addcommands_xtypes (id,name) values ('sendpugfax','FAX senden');
