@@ -46,7 +46,7 @@ class PUG implements IRoute{
                 $infotable->limit(1)->read();
                 if ($infotable->empty()) throw new \Exception('Info not found');
                 $info = $infotable->getSingle();
-                $info['mail_addresses']=json_decode($info['mail_addresses'],true);
+                $info['fax']=json_decode($info['fax'],true);
                 App::result('info', $info);
                 P::exportPUG($db);
 
