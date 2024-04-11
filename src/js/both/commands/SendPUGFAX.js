@@ -1,4 +1,4 @@
-Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
+Ext.define('Tualo.cmp.mail.commands.SendPUGFax', {
     statics:{
       glyph: 'fax',
       title: 'FAX senden',
