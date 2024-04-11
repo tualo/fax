@@ -26,11 +26,12 @@ class Send {
 
     public static function sendInterfax(array $config,string $pdf,string $number){
         $db = App::get('session')->getDB();
-        $fax = $db->singleRow('select * from fax where fax_id = :id',['id'=>$_GET['id']]);
+        // $fax = $db->singleRow('select * from fax where fax_id = {id}',['id'=>$_GET['id']]);
         $interfax = new InterfaxClient([
             'username' => $config['username'], 
             'password' => $config['password']
         ]);
         $fax = $interfax->deliver(['faxNumber' => $number, 'file' => $pdf]);
+        print_r($fax);
     }
 }
