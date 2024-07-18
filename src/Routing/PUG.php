@@ -138,6 +138,7 @@ class PUG implements IRoute{
 
         BasicRoute::add('/fax/(?P<tablename>[\w\-\_]+)/(?P<template>[\w\-\_]+)/(?P<id>.+)/(?P<number>[\w\-\_]+)', function ($matches) {
             try{
+                App::contenttype('application/json');
                 $filedata = RemotePDF::get($matches['tablename'],$matches['template'],$matches['id']);
                 if (isset($filedata['filename'])){
                     $res = Send::sendPDF($filedata['filename'],$matches['number']);
