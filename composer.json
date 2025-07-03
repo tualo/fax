@@ -1,27 +1,27 @@
 {
-    "name": "tualo/fax",
-    "description": "FAX Module for tualo office",
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Thomas Hoffmann",
-            "email": "thomas.hoffmann@tualo.de"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "Tualo\\Office\\FAX\\": "src/"
-        },
-        "files": ["src/functions.php"]
-    },
-    "minimum-stability": "dev",
-    "require": {
-        "tualo/ds": "*",
-        "erusev/parsedown": "*",
-        "tualo/pug": "*",
-        "tualo/cherry-markdown": "*",
-        "michelf/php-markdown": "*",
-        "interfax/interfax":"^2"
+  "name": "tualo/fax",
+  "description": "FAX Module for tualo office",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Thomas Hoffmann",
+      "email": "thomas.hoffmann@tualo.de"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Tualo\\Office\\FAX\\": "src/"
+    },
+    "files": [
+      "src/functions.php"
+    ]
+  },
+  "minimum-stability": "dev",
+  "require": {
+    "tualo/ds": "^1.0.1",
+    "tualo/pug": "^1.0.1",
+    "interfax/interfax": "^2"
+  },
+  "version": "1.0.1"
 }
