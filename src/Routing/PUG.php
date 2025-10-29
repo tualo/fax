@@ -6,51 +6,54 @@ namespace Tualo\Office\FAX\Routes;
 use Tualo\Office\FAX\Send;
 use Tualo\Office\Basic\TualoApplication as App;
 use Tualo\Office\Basic\Route as BasicRoute;
-use Tualo\Office\Basic\IRoute;
+use Tualo\Office\Basic\RouteWrapper;
 use Tualo\Office\DS\DSTable;
-use Tualo\Office\PUG\PUG AS P;
+use Tualo\Office\PUG\PUG as P;
 use Tualo\Office\RemoteBrowser\RemotePDF;
 use DOMDocument;
 use Tualo\Office\Mail\SMTP;
-class PUG implements IRoute{
+
+class PUG extends RouteWrapper
+{
+
     public static function register()
     {
         BasicRoute::add('/fax/renderpug', function ($matches) {
             $db = App::get('session')->getDB();
-            
+
             try {
 
-                App::set("pugCachePath", App::get("basePath").'/cache/'.$db->dbname.'/cache' );
+                App::set("pugCachePath", App::get("basePath") . '/cache/' . $db->dbname . '/cache');
 
-                $postdata = json_decode(file_get_contents("php://input"),true);
-                if(is_null($postdata)) throw new \Exception('Payload not readable');
-                
+                $postdata = json_decode(file_get_contents("php://input"), true);
+                if (is_null($postdata)) throw new \Exception('Payload not readable');
+
                 if (!isset($postdata['__sendfax_template'])) throw new \Exception('Template not set');
                 if (!isset($postdata['__sendfax_info'])) throw new \Exception('Info not set');
-                $template=$postdata['__sendfax_template'];
-                
+                $template = $postdata['__sendfax_template'];
 
-                $infotable = new DSTable($db,$postdata['__sendfax_info']);
 
-                if (!isset($postdata['__sendfax_filterfields'])){
-                    $f=[];
-                    foreach($postdata as $key => $value) $f[] = $key;
-                    $postdata['__sendfax_filterfields'] = implode(',',$f);
+                $infotable = new DSTable($db, $postdata['__sendfax_info']);
+
+                if (!isset($postdata['__sendfax_filterfields'])) {
+                    $f = [];
+                    foreach ($postdata as $key => $value) $f[] = $key;
+                    $postdata['__sendfax_filterfields'] = implode(',', $f);
                 }
-                $postdata['__sendfax_filterfields'] = explode(',',$postdata['__sendfax_filterfields']);
-                foreach($postdata as $key => $value) {
-                    if (in_array($key,$postdata['__sendfax_filterfields']))
-                    $infotable->filter($key,'=',$value);
+                $postdata['__sendfax_filterfields'] = explode(',', $postdata['__sendfax_filterfields']);
+                foreach ($postdata as $key => $value) {
+                    if (in_array($key, $postdata['__sendfax_filterfields']))
+                        $infotable->filter($key, '=', $value);
                 }
-                    
+
                 $infotable->limit(1)->read();
                 if ($infotable->empty()) throw new \Exception('Info not found');
                 $info = $infotable->getSingle();
-                $info['fax']=json_decode($info['fax'],true);
+                $info['fax'] = json_decode($info['fax'], true);
 
-                App::result('data',[
-                    'to'=>$info['fax'],
-                    'template'=> $template,
+                App::result('data', [
+                    'to' => $info['fax'],
+                    'template' => $template,
                 ]);
                 /*
                 App::result('info', $info);
@@ -137,21 +140,21 @@ class PUG implements IRoute{
 
 
         BasicRoute::add('/fax/(?P<tablename>[\w\-\_]+)/(?P<template>[\w\-\_]+)/(?P<id>.+)/(?P<number>[\w\+\(\)\-\_]+)', function ($matches) {
-            try{
+            try {
                 App::contenttype('application/json');
-                $filedata = RemotePDF::get($matches['tablename'],$matches['template'],$matches['id']);
-                if (isset($filedata['filename'])){
-                    $res = Send::sendPDF($filedata['filename'],$matches['number']);
-                    if ($res){
+                $filedata = RemotePDF::get($matches['tablename'], $matches['template'], $matches['id']);
+                if (isset($filedata['filename'])) {
+                    $res = Send::sendPDF($filedata['filename'], $matches['number']);
+                    if ($res) {
                         App::result('success', true);
-                    }else{
+                    } else {
                         App::result('success', false);
                     }
-                }else{
+                } else {
                     App::result('msg', 'File not found');
                     App::result('success', false);
                 }
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 App::result('success', false);
                 App::result('msg', $e->getMessage());
             }
@@ -159,30 +162,30 @@ class PUG implements IRoute{
 
         BasicRoute::add('/fax/sendpug', function ($matches) {
             App::contenttype('application/json');
-            try{
+            try {
                 $db = App::get('session')->getDB();
-                $data = json_decode(file_get_contents("php://input"),true);
-                if(is_null($data)) throw new \Exception('Payload not readable');
-                
-                if(!isset($data['to'])) throw new \Exception('To not set');
-                
-                
-                $to_list = explode(';',App::configuration('fax','force_fax_to',$data['to']));
-                foreach($to_list as $to){
+                $data = json_decode(file_get_contents("php://input"), true);
+                if (is_null($data)) throw new \Exception('Payload not readable');
+
+                if (!isset($data['to'])) throw new \Exception('To not set');
+
+
+                $to_list = explode(';', App::configuration('fax', 'force_fax_to', $data['to']));
+                foreach ($to_list as $to) {
                     $to = trim($to);
-                    if ($to!=''){
+                    if ($to != '') {
                         $data['to'] = $to;
-                        foreach($data['attachments'] as $attachment){
-                            $res = Send::sendPDF(App::get("tempPath").'/'.$attachment,$data['to']);
+                        foreach ($data['attachments'] as $attachment) {
+                            $res = Send::sendPDF(App::get("tempPath") . '/' . $attachment, $data['to']);
                         }
                     }
                 }
-                
+
                 App::result('success', true);
             } catch (\Exception $e) {
                 App::contenttype('application/json');
                 App::result('msg', $e->getMessage());
             }
-        }, ['put','post'], true);
+        }, ['put', 'post'], true);
     }
 }

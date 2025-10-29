@@ -19,9 +19,9 @@
   },
   "minimum-stability": "dev",
   "require": {
-    "tualo/ds": "^1.0",
-    "tualo/pug": "^1.0",
+    "tualo/ds": "^1.5.7",
+    "tualo/pug": "^1.3.5",
     "interfax/interfax": "^2"
   },
-  "version": "1.0.2"
+  "version": "1.0.3"
 }
