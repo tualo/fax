@@ -78,7 +78,7 @@ class Send
             'id' => $id,
             'number' => $number,
             'reference' => $reference,
-            'status' => 'started',
+            'status' => 'done',
             'location' => $faxLocation
         ]);
     }
