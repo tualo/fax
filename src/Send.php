@@ -34,7 +34,7 @@ class Send
         $id =  (Uuid::uuid4())->toString();
 
         $faxLocation = 'unknown';
-        $db->query('insert into fax_log (id, fax_number, reference, status, location) values ({id}, {number}, {reference}, {status}, {location}) on duplicate key update status = {status}, location = {location}', [
+        $db->direct('insert into fax_log (id, fax_number, reference, status, location) values ({id}, {number}, {reference}, {status}, {location}) on duplicate key update status = {status}, location = {location}', [
             'id' => $id,
             'number' => $number,
             'reference' => $reference,
@@ -69,7 +69,7 @@ class Send
          * );
          */
 
-        $db->query('insert into fax_log (id, fax_number, reference, status, location) values ({id}, {number}, {reference}, {status}, {location}) on duplicate key update status = {status}, location = {location}', [
+        $db->direct('insert into fax_log (id, fax_number, reference, status, location) values ({id}, {number}, {reference}, {status}, {location}) on duplicate key update status = {status}, location = {location}', [
             'id' => $id,
             'number' => $number,
             'reference' => $reference,
