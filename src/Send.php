@@ -20,7 +20,7 @@ class Send
 
         switch ($config['id']) {
             case 'interfax':
-                self::sendInterfax($config, $pdf, $number);
+                self::sendInterfax($config, $pdf, $number, $reference);
                 break;
             default:
                 throw new \Exception('Fax-Provider not found!');
