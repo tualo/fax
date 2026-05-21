@@ -70,7 +70,8 @@ class Send
          *     reference varchar(255),
          *     status varchar(255),
          *     location varchar(255),
-         *     timestamp timestamp default current_timestamp
+         *     timestamp timestamp default current_timestamp,
+         *     status_response json default null
          * );
          */
 
@@ -106,5 +107,32 @@ class Send
         }
 
         return [];
+    }
+
+
+    public static function requestOpenStatus()
+    {
+        $sql = '
+        select 
+            fax_log.*,
+            if (locate("/outbound/faxes/",location)=1,replace(location,"/outbound/faxes/",""),null ) fax_id
+        from 
+            fax_log
+        having 
+            fax_id is not null
+            and status_response is null
+            and `timestamp` between now() + interval - 3 hour and now() + interval - 10 minute
+        ';
+        $db = App::get('session')->getDB();
+        $records = $db->direct($sql);
+        foreach ($records as $record) {
+            $status = self::getInterfaxFaxRecord((int)$record['fax_id']);
+            if (count($status) > 0) {
+                $db->direct('update fax_log set status_response = {response} where id = {id}', [
+                    'id' => $record['id'],
+                    'response' => json_encode($status)
+                ]);
+            }
+        }
     }
 }

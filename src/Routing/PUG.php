@@ -198,5 +198,18 @@ class PUG extends RouteWrapper
                 App::result('msg', $e->getMessage());
             }
         }, ['get'], true);
+
+
+
+        BasicRoute::add('/fax/queryinfo', function ($matches) {
+            App::contenttype('application/json');
+            try {
+                Send::requestOpenStatus();
+                App::result('success', true);
+            } catch (\Exception $e) {
+                App::contenttype('application/json');
+                App::result('msg', $e->getMessage());
+            }
+        }, ['get'], true);
     }
 }
