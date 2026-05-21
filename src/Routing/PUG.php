@@ -23,7 +23,7 @@ class PUG extends RouteWrapper
 
             try {
 
-                App::set("pugCachePath", App::get("basePath") . '/cache/' . $db->dbname . '/cache');
+                App::set("pugCachePath", (string)App::get("basePath") . '/cache/' . $db->dbname . '/cache');
 
                 $postdata = json_decode(file_get_contents("php://input"), true);
                 if (is_null($postdata)) throw new \Exception('Payload not readable');
@@ -139,12 +139,12 @@ class PUG extends RouteWrapper
         }, ['put'], true);
 
 
-        BasicRoute::add('/fax/(?P<tablename>[\w\-\_]+)/(?P<template>[\w\-\_]+)/(?P<id>.+)/(?P<number>[\w\+\(\)\-\_]+)', function ($matches) {
+        BasicRoute::add('/fax/(?P<tablename>[\w\-\_]+)/(?P<template>[\w\-\_]+)/(?P<id>.+)/(?P<number>[\w\+\(\)\-\_]+)(?:/(?P<reference>.*))?', function ($matches) {
             try {
                 App::contenttype('application/json');
                 $filedata = RemotePDF::get($matches['tablename'], $matches['template'], $matches['id']);
                 if (isset($filedata['filename'])) {
-                    $res = Send::sendPDF($filedata['filename'], $matches['number']);
+                    $res = Send::sendPDF($filedata['filename'], $matches['number'], $matches['reference'] ?? '');
                     if ($res) {
                         App::result('success', true);
                     } else {
@@ -176,7 +176,7 @@ class PUG extends RouteWrapper
                     if ($to != '') {
                         $data['to'] = $to;
                         foreach ($data['attachments'] as $attachment) {
-                            $res = Send::sendPDF(App::get("tempPath") . '/' . $attachment, $data['to']);
+                            $res = Send::sendPDF((string)App::get("tempPath") . '/' . $attachment, $data['to'], $data['reference'] ?? '');
                         }
                     }
                 }
