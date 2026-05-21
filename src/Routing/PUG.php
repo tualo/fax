@@ -187,5 +187,16 @@ class PUG extends RouteWrapper
                 App::result('msg', $e->getMessage());
             }
         }, ['put', 'post'], true);
+
+        BasicRoute::add('/fax/info/(?P<id>[\d]+)', function ($matches) {
+            App::contenttype('application/json');
+            try {
+                App::result('data', Send::getInterfaxFaxRecord((int)$matches['id']));
+                App::result('success', true);
+            } catch (\Exception $e) {
+                App::contenttype('application/json');
+                App::result('msg', $e->getMessage());
+            }
+        }, ['get'], true);
     }
 }

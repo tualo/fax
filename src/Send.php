@@ -82,4 +82,29 @@ class Send
             'location' => $faxLocation
         ]);
     }
+
+    public static function getInterfaxFaxRecord(int $faxID): array
+    {
+        $config = App::get('session')->getDB()->singleRow('select * from fax_config');
+        $interfax = new InterfaxClient([
+            'username' => $config['username'],
+            'password' => $config['password']
+        ]);
+
+        try {
+
+            $response = $interfax->get('/outbound/faxes/' . $faxID);
+
+            if (is_array($response) && array_key_exists('id', $response)) {
+                return $response;
+            }
+        } catch (\RuntimeException $e) {
+            if ((int) $e->getCode() === 404) {
+                return [];
+            }
+            throw $e;
+        }
+
+        return [];
+    }
 }
