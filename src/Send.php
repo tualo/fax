@@ -33,6 +33,11 @@ class Send
         $db = App::get('session')->getDB();
         $id =  (Uuid::uuid4())->toString();
 
+        $number = str_replace('+49', '0049', $number);
+        $number = str_replace('+', '00', $number);
+        $number = preg_replace('/[^\d]/', '', $number);
+
+
         $faxLocation = 'unknown';
         $db->direct('insert into fax_log (id, fax_number, reference, status, location) values ({id}, {number}, {reference}, {status}, {location}) on duplicate key update status = {status}, location = {location}', [
             'id' => $id,

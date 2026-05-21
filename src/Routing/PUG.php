@@ -49,7 +49,7 @@ class PUG extends RouteWrapper
                 $infotable->limit(1)->read();
                 if ($infotable->empty()) throw new \Exception('Info not found');
                 $info = $infotable->getSingle();
-                $info['fax'] = json_decode($info['fax'], true);
+                // $info['fax'] = json_decode($info['fax'], true);
 
                 App::result('data', [
                     'to' => $info['fax'],
@@ -139,7 +139,7 @@ class PUG extends RouteWrapper
         }, ['put'], true);
 
 
-        BasicRoute::add('/fax/(?P<tablename>[\w\-\_]+)/(?P<template>[\w\-\_]+)/(?P<id>.+)/(?P<number>[\w\+\(\)\-\_]+)(?:/(?P<reference>.*))?', function ($matches) {
+        BasicRoute::add('/fax/(?P<tablename>[\w\-\_]+)/(?P<template>[\w\-\_]+)/(?P<id>.+)/(?P<number>[\d\+]+)(?:/(?P<reference>.*))?', function ($matches) {
             try {
                 App::contenttype('application/json');
                 $filedata = RemotePDF::get($matches['tablename'], $matches['template'], $matches['id']);
